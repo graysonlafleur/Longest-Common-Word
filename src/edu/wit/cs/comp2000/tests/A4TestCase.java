@@ -11,7 +11,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.Timeout;
 
-import edu.wit.cs.comp2000.solution.A4;
+import edu.wit.cs.comp2000.A4;
 
 public class A4TestCase{
 
