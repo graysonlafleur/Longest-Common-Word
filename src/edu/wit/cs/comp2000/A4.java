@@ -19,40 +19,44 @@ public class A4 {
 	 */
 	public static String[] FindLongestCommonWords(String[] fileNames) {
 		
-		List<String>[] temp1 = new ArrayList[42];
-		List<String>[] temp = new ArrayList[42];
-		ArrayList<String> finalAL = new ArrayList<String>();
 		
-		for(int i = 0; i<42; i++) {
-			temp1[i] = new ArrayList<String>();
-			temp[i] = new ArrayList<String>();
-		}
+		List<String> filteredWordList = new ArrayList<String>();
+		ArrayList<String> finalWordList = new ArrayList<String>();
 		
 		for(int i = 0; i<fileNames.length; i++) {
 			try { 
+				List<String> unfilteredWordList = new ArrayList<String>();
 				String l;
 				String[] words;
 				BufferedReader br = new BufferedReader(new FileReader(fileNames[i]));
+				
 				l = br.readLine();
 				
 				while(l!=null) {
 					words = l.split("[^a-zA-Z]");
 					for(String word : words) {
 						if(word.length() >= 8 && word.length() <= 50) {
-							temp1[word.length()-8].add(word.toLowerCase());
+							unfilteredWordList.add(word.toLowerCase());
 						}
 					}
 					l=br.readLine();
 				}
 				
-				for(int j = 0; j<41; j++) {
-					if(temp1[j].size()>0) temp1[j] = temp1[j].stream().distinct().collect(Collectors.toList());
+				unfilteredWordList = unfilteredWordList.stream().distinct().collect(Collectors.toList());
+				ArrayList<String> temporary = new ArrayList<String>();
+				
+				temporary.addAll(filteredWordList);
+				
+				if(i==0) filteredWordList.addAll(unfilteredWordList);
+				else{
+					for(String word : temporary) {
+						if(!unfilteredWordList.contains(word)) {
+							filteredWordList.remove(word);
+						}
+					}
 				}
 				
-				for(int j = 0; j < 41; j++) {
-					if(temp1[j].size()>0) temp[j].addAll(temp1[j]);
-					temp1[j].clear();
-				}
+				br.close();
 			}
 			catch (IOException ioe){
 				System.out.println("Error: File inputted that does not exist");
@@ -61,27 +65,25 @@ public class A4 {
 		}
 		
 		int total = 0;
+		int lastLength = 0;
 		
-		for(int i = 41; i>=0; i--) {
-			if(total <= 10) {
-				Collections.sort(temp[i]);
-				for(int j = 0; j<temp[i].size(); j++) {
-					if((j+fileNames.length-1 < temp[i].size()) && (temp[i].get(j).equals(temp[i].get(j+fileNames.length-1)))) {
-						finalAL.add(temp[i].get(j));
-						j+=fileNames.length-1;
-					}
-				}
-				total += finalAL.size();
+		Collections.sort(filteredWordList, new alphAndLength());
+		
+		for(int j = 0; j<filteredWordList.size(); j++) {
+			if(total<10 || lastLength==filteredWordList.get(j).length()) {
+				finalWordList.add(filteredWordList.get(j));
+				total++;
+				lastLength = filteredWordList.get(j).length();
 			}
 			else break;
 		}
 		
-		String[] longestWords = new String[finalAL.size()];
+		Collections.sort(finalWordList);
 		
-		Collections.sort(finalAL);
+		String[] longestWords = new String[finalWordList.size()];
 		
-		for(int i = 0; i<finalAL.size(); i++) {
-			longestWords[i] = finalAL.get(i);
+		for(int i = 0; i<finalWordList.size(); i++) {
+			longestWords[i] = finalWordList.get(i);
 		}
 		
 		return longestWords;
