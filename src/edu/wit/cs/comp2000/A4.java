@@ -21,11 +21,11 @@ public class A4 {
 		
 		
 		List<String> filteredWordList = new ArrayList<String>();
+		List<String> unfilteredWordList = new ArrayList<String>();
 		ArrayList<String> finalWordList = new ArrayList<String>();
 		
 		for(int i = 0; i<fileNames.length; i++) {
 			try { 
-				List<String> unfilteredWordList = new ArrayList<String>();
 				String l;
 				String[] words;
 				BufferedReader br = new BufferedReader(new FileReader(fileNames[i]));
@@ -43,18 +43,10 @@ public class A4 {
 				}
 				
 				unfilteredWordList = unfilteredWordList.stream().distinct().collect(Collectors.toList());
-				ArrayList<String> temporary = new ArrayList<String>();
+					
+				filteredWordList.addAll(unfilteredWordList);
 				
-				temporary.addAll(filteredWordList);
-				
-				if(i==0) filteredWordList.addAll(unfilteredWordList);
-				else{
-					for(String word : temporary) {
-						if(!unfilteredWordList.contains(word)) {
-							filteredWordList.remove(word);
-						}
-					}
-				}
+				unfilteredWordList = new ArrayList<String>();
 				
 				br.close();
 			}
@@ -71,9 +63,12 @@ public class A4 {
 		
 		for(int j = 0; j<filteredWordList.size(); j++) {
 			if(total<10 || lastLength==filteredWordList.get(j).length()) {
-				finalWordList.add(filteredWordList.get(j));
-				total++;
-				lastLength = filteredWordList.get(j).length();
+				if(j+fileNames.length-1<filteredWordList.size() && filteredWordList.get(j).equals(filteredWordList.get(j+fileNames.length-1))) {
+					finalWordList.add(filteredWordList.get(j));
+					total++;
+					lastLength = filteredWordList.get(j).length();
+					j+= fileNames.length-1;
+				}
 			}
 			else break;
 		}
@@ -84,6 +79,7 @@ public class A4 {
 		
 		for(int i = 0; i<finalWordList.size(); i++) {
 			longestWords[i] = finalWordList.get(i);
+			System.out.println(longestWords[i]);
 		}
 		
 		return longestWords;
