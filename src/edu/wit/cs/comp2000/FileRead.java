@@ -32,7 +32,6 @@ public class FileRead implements Runnable{
 			for(String word : words) {
 				if(word.length() >= 8 && word.length() <= 50) s.add(word);
 			}
-			
 		}
 		catch(Exception e){
 			System.out.println("Caught an exception");

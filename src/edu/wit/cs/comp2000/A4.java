@@ -25,7 +25,6 @@ public class A4 {
 		Thread[] thread = new Thread[fileNames.length];
 		FileRead[] readFiles = new FileRead[fileNames.length];
 		
-		final long startTime = System.currentTimeMillis();
 		for(int i = 0; i<fileNames.length; i++) {
 			readFiles[i] = new FileRead(fileNames[i]);
 			thread[i] = new Thread(readFiles[i]);
@@ -38,8 +37,6 @@ public class A4 {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-		final long endTime = System.currentTimeMillis();
-		System.out.println("Multithread file reading time is: " + (endTime - startTime));
 		
 		if(fileNames.length>1)
 		{
@@ -85,7 +82,7 @@ public class A4 {
 		int counter = 0;
 		
 		for(String word : finalWordList) longestWords[counter++] = word;
-		final long endTime2 = System.currentTimeMillis();
+		
 		return longestWords;
 	}
 	
