@@ -19,13 +19,11 @@ public class A4 {
 	 */
 	public static String[] FindLongestCommonWords(String[] fileNames) {
 		
-		
-		List<String> filteredWordList = new ArrayList<String>();
-		List<String> unfilteredWordList = new ArrayList<String>();
-		ArrayList<String> finalWordList = new ArrayList<String>();
+		Set<String> unfilteredWordList = new LinkedHashSet<String>();
+		Set<String> filteredWordList = new LinkedHashSet<String>();
 		
 		for(int i = 0; i<fileNames.length; i++) {
-			try { 
+			try {
 				String l;
 				String[] words;
 				BufferedReader br = new BufferedReader(new FileReader(fileNames[i]));
@@ -35,18 +33,16 @@ public class A4 {
 				while(l!=null) {
 					words = l.split("[^a-zA-Z]");
 					for(String word : words) {
-						if(word.length() >= 8 && word.length() <= 50) {
-							unfilteredWordList.add(word.toLowerCase());
-						}
+						if(word.length() >= 8 && word.length() <= 50) unfilteredWordList.add(word);
 					}
-					l=br.readLine();
+					
+					l = br.readLine();
 				}
 				
-				unfilteredWordList = unfilteredWordList.stream().distinct().collect(Collectors.toList());
-					
-				filteredWordList.addAll(unfilteredWordList);
+				if(i==0) filteredWordList = unfilteredWordList;
+				else filteredWordList = CheckSameWords(filteredWordList, unfilteredWordList);
 				
-				unfilteredWordList = new ArrayList<String>();
+				unfilteredWordList = new LinkedHashSet<String>();
 				
 				br.close();
 			}
@@ -56,33 +52,40 @@ public class A4 {
 			}
 		}
 		
+		TreeSet<String> orderedWordList = new TreeSet<String>(new alphAndLength());
+		orderedWordList.addAll(filteredWordList);
+		
+		TreeSet<String> finalWordList = new TreeSet<String>();
+		
 		int total = 0;
 		int lastLength = 0;
 		
-		Collections.sort(filteredWordList, new alphAndLength());
-		
-		for(int j = 0; j<filteredWordList.size(); j++) {
-			if(total<10 || lastLength==filteredWordList.get(j).length()) {
-				if(j+fileNames.length-1<filteredWordList.size() && filteredWordList.get(j).equals(filteredWordList.get(j+fileNames.length-1))) {
-					finalWordList.add(filteredWordList.get(j));
-					total++;
-					lastLength = filteredWordList.get(j).length();
-					j+= fileNames.length-1;
-				}
+		for(String word : orderedWordList) {
+			if(total <= 10 || word.length() == lastLength) {
+				finalWordList.add(word);
+				total++;
+				lastLength = word.length();
 			}
 			else break;
 		}
 		
-		Collections.sort(finalWordList);
-		
 		String[] longestWords = new String[finalWordList.size()];
 		
-		for(int i = 0; i<finalWordList.size(); i++) {
-			longestWords[i] = finalWordList.get(i);
-			System.out.println(longestWords[i]);
-		}
+		int counter = 0;
+		
+		for(String word : finalWordList) longestWords[counter++] = word;
 		
 		return longestWords;
+	}
+	
+	public static LinkedHashSet<String> CheckSameWords(Set<String> o1, Set<String> o2) {
+		LinkedHashSet<String> q = new LinkedHashSet<String>();
+		
+		for(String word : o1) {
+			if(o2.contains(word)) q.add(word);
+		}
+		
+		return q;
 	}
 
 	public static void main(String[] argv) {
