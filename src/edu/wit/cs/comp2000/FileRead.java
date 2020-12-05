@@ -1,12 +1,9 @@
 package edu.wit.cs.comp2000;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.LinkedHashSet;
-import java.util.Set;
 
 public class FileRead implements Runnable{
 	
@@ -27,10 +24,11 @@ public class FileRead implements Runnable{
 			catch(IOException e) {
 				System.out.println("File not found");
 			}
+			
 			String[] words = l.split("[^a-zA-Z]");
 			
 			for(String word : words) {
-				if(word.length() >= 8 && word.length() <= 50 && !s.contains(word)) s.add(word);
+				if(word.length() >= 8 && word.length() <= 50) s.add(word);
 			}
 		}
 		catch(Exception e){
