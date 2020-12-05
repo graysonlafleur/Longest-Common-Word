@@ -19,38 +19,49 @@ public class A4 {
 	 */
 	public static String[] FindLongestCommonWords(String[] fileNames) {
 		
-		Set<String> unfilteredWordList = new LinkedHashSet<String>();
-		Set<String> filteredWordList = new LinkedHashSet<String>();
+		ArrayList<LinkedHashSet<String>> unfilteredLists = new ArrayList<LinkedHashSet<String>>();
+		LinkedHashSet<String> filteredWordList = new LinkedHashSet<String>();
 		
+		Thread[] thread = new Thread[fileNames.length];
+		FileRead[] readFiles = new FileRead[fileNames.length];
+		
+		final long startTime = System.currentTimeMillis();
 		for(int i = 0; i<fileNames.length; i++) {
-			try {
-				String l;
-				String[] words;
-				BufferedReader br = new BufferedReader(new FileReader(fileNames[i]));
-				
-				l = br.readLine();
-				
-				while(l!=null) {
-					words = l.split("[^a-zA-Z]");
-					for(String word : words) {
-						if(word.length() >= 8 && word.length() <= 50) unfilteredWordList.add(word);
-					}
-					
-					l = br.readLine();
-				}
-				
-				if(i==0) filteredWordList = unfilteredWordList;
-				else filteredWordList = CheckSameWords(filteredWordList, unfilteredWordList);
-				
-				unfilteredWordList = new LinkedHashSet<String>();
-				
-				br.close();
-			}
-			catch (IOException ioe){
-				System.out.println("Error: File inputted that does not exist");
-				System.exit(0);
-			}
+			readFiles[i] = new FileRead(fileNames[i]);
+			thread[i] = new Thread(readFiles[i]);
+			thread[i].start();
 		}
+		
+		for(Thread t : thread)
+			try {
+				t.join();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		final long endTime = System.currentTimeMillis();
+		System.out.println("Multithread file reading time is: " + (endTime - startTime));
+		
+		if(fileNames.length>1)
+		{
+			for(int i = 0; i<readFiles.length; i++) {
+				for(int j = i+1; j<readFiles.length; j++) {
+					if(readFiles[i].s.size() > readFiles[j].s.size()) {
+						FileRead t = readFiles[i];
+						readFiles[i] = readFiles[j];
+						readFiles[j] = t;
+					}
+				}
+			}
+			
+			for(int i = 0; i<fileNames.length; i++) unfilteredLists.add(readFiles[i].s);
+		
+			filteredWordList = unfilteredLists.get(0);
+			for(int i = 1; i<unfilteredLists.size(); i++) filteredWordList = CheckSameWords(filteredWordList, unfilteredLists.get(i));
+		}
+		else {
+			filteredWordList=readFiles[0].s;
+		}
+		
 		
 		TreeSet<String> orderedWordList = new TreeSet<String>(new alphAndLength());
 		orderedWordList.addAll(filteredWordList);
@@ -74,7 +85,7 @@ public class A4 {
 		int counter = 0;
 		
 		for(String word : finalWordList) longestWords[counter++] = word;
-		
+		final long endTime2 = System.currentTimeMillis();
 		return longestWords;
 	}
 	
