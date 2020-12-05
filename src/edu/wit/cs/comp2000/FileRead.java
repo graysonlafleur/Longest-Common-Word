@@ -30,7 +30,7 @@ public class FileRead implements Runnable{
 			String[] words = l.split("[^a-zA-Z]");
 			
 			for(String word : words) {
-				if(word.length() >= 8 && word.length() <= 50) s.add(word);
+				if(word.length() >= 8 && word.length() <= 50 && !s.contains(word)) s.add(word);
 			}
 		}
 		catch(Exception e){
