@@ -47,14 +47,14 @@ public class A4 {
 			for(int i = 0; i<fileNames.length; i++) unfilteredLists.add(readFiles[i].s);
 		
 			filteredWordList = unfilteredLists.get(0);
-			for(int i = 1; i<unfilteredLists.size(); i++) filteredWordList = CheckSameWords(filteredWordList, unfilteredLists.get(i));
+			for(int i = 1; i<unfilteredLists.size(); i++) filteredWordList.retainAll(unfilteredLists.get(i));
 		}
 		else {
 			filteredWordList=readFiles[0].s;
 		}
 		
 		
-		TreeSet<String> orderedWordList = new TreeSet<String>(new alphAndLength());
+		TreeSet<String> orderedWordList = new TreeSet<String>(new AlphAndLength());
 		orderedWordList.addAll(filteredWordList);
 		
 		TreeSet<String> finalWordList = new TreeSet<String>();
@@ -78,16 +78,6 @@ public class A4 {
 		for(String word : finalWordList) longestWords[counter++] = word;
 		
 		return longestWords;
-	}
-	
-	public static LinkedHashSet<String> CheckSameWords(Set<String> o1, Set<String> o2) {
-		LinkedHashSet<String> q = new LinkedHashSet<String>();
-		
-		for(String word : o1) {
-			if(o2.contains(word)) q.add(word);
-		}
-		
-		return q;
 	}
 
 	public static void main(String[] argv) {
