@@ -1,0 +1,4 @@
+Score: 100
+
+== junit ==
+edu.wit.cs.comp2000.grading.A4Grading#testTimed: +0
